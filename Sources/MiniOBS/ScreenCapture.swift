@@ -1,3 +1,4 @@
+import AppKit
 import CoreMedia
 import ScreenCaptureKit
 
@@ -33,21 +34,27 @@ final class ScreenCapture: NSObject {
         return _latest
     }
 
-    /// Ventanas que tiene sentido grabar: con título, en pantalla, de una app
-    /// que no sea esta.
+    /// Todas las ventanas normales de todas las apps que están corriendo: en
+    /// cualquier escritorio, minimizadas o tapadas también. Fuera quedan solo
+    /// las de esta app, los elementos del sistema (menús, Dock, paneles
+    /// flotantes) y las ventanas diminutas que no son ventanas de verdad.
     static func windows() async throws -> [SCWindow] {
-        let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
+        let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: false)
         let me = Bundle.main.bundleIdentifier
         return content.windows
             .filter { w in
-                guard let app = w.owningApplication, app.bundleIdentifier != me else { return false }
-                guard let title = w.title, !title.isEmpty else { return false }
-                return w.windowLayer == 0 && w.frame.width >= 200 && w.frame.height >= 200
+                guard let app = w.owningApplication, app.bundleIdentifier != me, !app.applicationName.isEmpty else { return false }
+                // Solo apps «de verdad» (las del Dock): fuera los servicios de
+                // autorrelleno, los paneles de abrir/guardar, Siri, loginwindow…
+                guard NSRunningApplication(processIdentifier: app.processID)?.activationPolicy == .regular else { return false }
+                return w.windowLayer == 0 && w.frame.width >= 64 && w.frame.height >= 64
             }
             .sorted { a, b in
                 let an = a.owningApplication?.applicationName ?? ""
                 let bn = b.owningApplication?.applicationName ?? ""
-                return an == bn ? (a.title ?? "") < (b.title ?? "") : an < bn
+                if an != bn { return an.localizedCaseInsensitiveCompare(bn) == .orderedAscending }
+                // Dentro de una app, la ventana más grande primero: suele ser la principal.
+                return a.frame.width * a.frame.height > b.frame.width * b.frame.height
             }
     }
 

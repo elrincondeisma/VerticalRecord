@@ -114,6 +114,12 @@ final class Engine: ObservableObject {
         startControlServer()
         startRenderLoop()
 
+        // Al volver a MiniOBS (viniendo de abrir otra app, por ejemplo) la
+        // lista de ventanas se pone al día sola.
+        NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in await self?.refreshWindows() }
+        }
+
         if demo != nil {
             status = "Cámara: OBSBOT Tiny 2 Lite · Micro: Maonocaster E2"
             return
@@ -138,6 +144,11 @@ final class Engine: ObservableObject {
         if microphoneID.isEmpty || !microphones.contains(where: { $0.uniqueID == microphoneID }) {
             microphoneID = AVCaptureDevice.default(for: .audio)?.uniqueID ?? microphones.first?.uniqueID ?? ""
         }
+        await refreshWindows()
+    }
+
+    func refreshWindows() async {
+        guard started, demo == nil else { return }
         do {
             windows = try await ScreenCapture.windows()
             if !windows.contains(where: { $0.windowID == windowID }) {
@@ -151,7 +162,10 @@ final class Engine: ObservableObject {
     var selectedWindow: SCWindow? { windows.first { $0.windowID == windowID } }
 
     func windowLabel(_ w: SCWindow) -> String {
-        "\(w.owningApplication?.applicationName ?? "?") — \(w.title ?? "")"
+        let app = w.owningApplication?.applicationName ?? "?"
+        let title = (w.title ?? "").trimmingCharacters(in: .whitespaces)
+        let size = "\(Int(w.frame.width))×\(Int(w.frame.height))"
+        return title.isEmpty ? "\(app) — \(size)" : "\(app) — \(title)"
     }
 
     // MARK: - Captura
