@@ -173,6 +173,15 @@ struct ContentView: View {
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
                     .textSelection(.enabled)
+                // Gratis y open source; el café es la única forma de apoyar el proyecto, y no interrumpe.
+                Button {
+                    NSWorkspace.shared.open(Links.coffee)
+                } label: {
+                    Label("Gratis y open source · invítame a un café", systemImage: "cup.and.saucer")
+                        .font(.caption2)
+                }
+                .buttonStyle(.link)
+                .padding(.top, 2)
             }
         }
         .padding(16)

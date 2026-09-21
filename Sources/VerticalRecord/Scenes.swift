@@ -1,6 +1,13 @@
 import AVFoundation
 import CoreGraphics
 
+/// Enlaces del proyecto: un solo sitio para no repetirlos por la interfaz.
+enum Links {
+    static let repo = URL(string: "https://github.com/elrincondeisma/VerticalRecord")!
+    static let coffee = URL(string: "https://buymeacoffee.com/elrincondeisma")!
+    static let channel = URL(string: "https://www.youtube.com/@elrincondeisma")!
+}
+
 /// El lienzo siempre es vertical 9:16; la calidad elige cuántos píxeles.
 struct Canvas: Equatable {
     let width: Int

@@ -54,6 +54,16 @@ struct PreferencesView: View {
                         .font(.caption)
                 }
             }
+
+            Section("Apoyar el proyecto") {
+                HStack {
+                    Text("VerticalRecord es gratis y de código abierto. Si te ahorra tiempo, puedes invitarme a un café.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button("Invítame a un café ☕") { NSWorkspace.shared.open(Links.coffee) }
+                }
+            }
         }
         .formStyle(.grouped)
         .frame(width: 520)

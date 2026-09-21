@@ -29,6 +29,11 @@ struct VerticalRecordApp: App {
                     NSWorkspace.shared.open(engine.outputFolder)
                 }
             }
+            CommandGroup(replacing: .help) {
+                Button("Invítame a un café ☕") { NSWorkspace.shared.open(Links.coffee) }
+                Button("Código fuente en GitHub") { NSWorkspace.shared.open(Links.repo) }
+                Button("El Rincón de Isma en YouTube") { NSWorkspace.shared.open(Links.channel) }
+            }
         }
     }
 }

@@ -14,6 +14,7 @@
   <img src="https://img.shields.io/badge/macOS-15%2B-000?logo=apple" alt="macOS 15+">
   <img src="https://img.shields.io/badge/Apple%20Silicon-nativo-000?logo=apple" alt="Apple Silicon">
   <img src="https://img.shields.io/github/license/elrincondeisma/VerticalRecord" alt="MIT">
+  <a href="https://buymeacoffee.com/elrincondeisma"><img src="https://img.shields.io/badge/invítame%20a%20un%20café-ffdd00?logo=buymeacoffee&logoColor=000" alt="Buy me a coffee"></a>
 </p>
 
 <p align="center">
@@ -156,6 +157,13 @@ desincronía que corregir.
   para llenar el lienzo vertical). En la escena dividida la cámara va casi a tamaño nativo.
 - Si la ventana capturada se cierra, la parte de arriba se queda en negro hasta elegir otra (↻).
 - Una sola cámara, un solo micro, dos escenas. Es la idea.
+
+## Apoyar el proyecto
+
+VerticalRecord es gratis y de código abierto, y lo va a seguir siendo. Si te ahorra tiempo,
+puedes [invitarme a un café](https://buymeacoffee.com/elrincondeisma) ☕ — también hay un botón
+«Sponsor» arriba del repo. Y si haces vídeos con ella, cuéntamelo en
+[El Rincón de Isma](https://www.youtube.com/@elrincondeisma).
 
 ## Licencia
 

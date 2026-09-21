@@ -33,7 +33,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
     <key>CFBundleExecutable</key><string>VerticalRecord</string>
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleVersion</key><string>1</string>
-    <key>CFBundleShortVersionString</key><string>${VERSION:-1.1.0}</string>
+    <key>CFBundleShortVersionString</key><string>${VERSION:-1.1.1}</string>
     <key>CFBundleDevelopmentRegion</key><string>es</string>
     <key>CFBundleLocalizations</key><array><string>es</string><string>en</string></array>
     <key>LSApplicationCategoryType</key><string>public.app-category.video</string>
