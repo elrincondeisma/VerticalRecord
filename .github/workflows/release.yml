@@ -1,0 +1,26 @@
+name: DMG
+
+# Construye el DMG en un runner de GitHub y lo adjunta a la release de esa
+# versión. Se lanza a mano (Actions → DMG → Run workflow) porque las releases
+# normales se publican desde el Mac con `release.sh`, ya firmadas.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versión (p. ej. 0.1.0); la release v<versión> debe existir o se crea"
+        required: true
+
+jobs:
+  dmg:
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: DMG
+        run: ./release.sh "${{ inputs.version }}"
+      - name: Publicar
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          files: dist/MiniOBS-*.dmg

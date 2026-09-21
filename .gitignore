@@ -1,0 +1,5 @@
+.build/
+MiniOBS.app/
+*.xcodeproj
+.DS_Store
+dist/
