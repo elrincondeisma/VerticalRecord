@@ -4,6 +4,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var engine: Engine
+    @EnvironmentObject var updates: UpdateChecker
 
     var body: some View {
         HStack(spacing: 0) {
@@ -160,6 +161,10 @@ struct ContentView: View {
 
             Spacer()
 
+            if let release = updates.available {
+                updateBanner(release)
+            }
+
             VStack(alignment: .leading, spacing: 6) {
                 if let problem = engine.problem {
                     Label(problem, systemImage: "exclamationmark.triangle.fill")
@@ -185,6 +190,32 @@ struct ContentView: View {
             }
         }
         .padding(16)
+    }
+
+    /// Aviso de versión nueva: una tarjeta con descarga; se puede omitir esa versión.
+    private func updateBanner(_ release: UpdateChecker.Release) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("VerticalRecord \(release.version) disponible", systemImage: "arrow.down.circle.fill")
+                .font(.callout.weight(.semibold))
+            Text("Descarga el DMG y arrastra la app a Aplicaciones para actualizar.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack {
+                Button("Descargar") { updates.download(release) }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                Button("Novedades") { NSWorkspace.shared.open(release.pageURL) }
+                    .controlSize(.small)
+                Spacer()
+                Button("Omitir") { updates.skip(release) }
+                    .buttonStyle(.link)
+                    .font(.caption)
+            }
+        }
+        .padding(10)
+        .background(Color.accentColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
+        .padding(.bottom, 8)
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {

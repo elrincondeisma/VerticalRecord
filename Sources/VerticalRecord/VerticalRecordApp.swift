@@ -3,12 +3,18 @@ import SwiftUI
 @main
 struct VerticalRecordApp: App {
     @StateObject private var engine = Engine()
+    @StateObject private var updates = UpdateChecker()
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
     var body: some Scene {
         WindowGroup("VerticalRecord") {
             ContentView()
                 .environmentObject(engine)
+                .environmentObject(updates)
+                .onAppear {
+                    // El modo demo no sale a la red; el resto, una vez al día.
+                    if engine.demo == nil { updates.checkIfDue() }
+                }
         }
         .windowResizability(.contentSize)
         Settings {
@@ -28,6 +34,10 @@ struct VerticalRecordApp: App {
                 Button("Abrir la carpeta de grabaciones") {
                     NSWorkspace.shared.open(engine.outputFolder)
                 }
+            }
+            CommandGroup(after: .appInfo) {
+                Button("Buscar actualizaciones…") { updates.checkNow() }
+                    .disabled(updates.checking)
             }
             CommandGroup(replacing: .help) {
                 Button("Invítame a un café ☕") { NSWorkspace.shared.open(Links.coffee) }

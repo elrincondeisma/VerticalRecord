@@ -70,6 +70,11 @@ VerticalRecord hace eso, en vertical, a 4K, y ya está.
 4. Al arrancar te pedirá permiso de **cámara**, **micrófono** y **grabación de pantalla**. El de
    **Accesibilidad** solo hace falta si usas «Ajustar la ventana al hueco».
 
+**Actualizaciones**: la app consulta GitHub una vez al día y, si hay una versión nueva, te lo dice en
+la ventana con un botón para descargar el DMG (también en el menú **VerticalRecord → Buscar
+actualizaciones…**). La instalación es la misma: arrastrar a Aplicaciones. No se instala nada en
+segundo plano.
+
 Requiere macOS 15 (Sequoia) o posterior y un Mac con Apple Silicon.
 
 ## Uso
