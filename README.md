@@ -29,7 +29,8 @@ MiniOBS hace eso, en vertical, a 4K, y ya está.
 - **Lienzo vertical** 9:16, a **4K (2160×3840)** o 1080p, 30 fps.
 - **Dos escenas**, cambiables en caliente mientras grabas:
   - **Cámara** — tu cámara a pantalla completa.
-  - **Dividida** — arriba 2/3 con la ventana que elijas, abajo 1/3 con la cámara.
+  - **Dividida** — la ventana que elijas y la cámara, con el reparto que quieras: ½·½, ⅗·⅖, ⅔·⅓ o ¾·¼,
+    y la cámara arriba o abajo.
 - **Captura de una ventana concreta**, no de una región de pantalla: la app que grabas puede estar
   en cualquier monitor y tapada por otras, y sigue saliendo entera (ScreenCaptureKit).
 - **«Ajustar la ventana al hueco»**: redimensiona la ventana capturada a la proporción exacta del
@@ -69,8 +70,9 @@ Requiere macOS 15 (Sequoia) o posterior y un Mac con Apple Silicon.
 
 ## Uso
 
-1. Elige la **ventana** que quieres grabar en la escena dividida (Warp, VS Code, el navegador…).
-   Si no tiene la proporción del hueco, pulsa **Ajustar la ventana al hueco**.
+1. Elige la **ventana** que quieres grabar en la escena dividida (Warp, VS Code, el navegador…) y el
+   **reparto** (cuánto lienzo se lleva la ventana). Si la ventana no tiene la proporción del hueco,
+   pulsa **Ajustar la ventana al hueco**.
 2. Elige **cámara** y **micrófono**. Si no sales centrado, mueve el **Encuadre**.
 3. `⌘R` para grabar. Cambia de escena con `⌘1` / `⌘2` cuando quieras.
 4. `⌘R` para parar. El vídeo está en `~/Movies/MiniOBS/` (o la carpeta que elijas en Preferencias).
@@ -97,6 +99,7 @@ GET /scene/camera        GET /scene/split
 GET /record/start        GET /record/stop        GET /record/toggle
 GET /windows             GET /window/<id>        GET /window/<nombre de app>   (p. ej. /window/Warp)
 GET /window/fit          GET /window/unfit
+GET /split/half | threeFifths | twoThirds | threeQuarters      GET /split/top   GET /split/bottom
 ```
 
 ```bash

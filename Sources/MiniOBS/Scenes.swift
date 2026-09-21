@@ -99,24 +99,80 @@ enum SceneKind: String, CaseIterable, Codable, Identifiable {
     }
 }
 
+/// Cuánto lienzo se lleva la ventana en la escena dividida; el resto es cámara.
+enum SplitRatio: String, CaseIterable, Codable, Identifiable {
+    case half
+    case threeFifths
+    case twoThirds
+    case threeQuarters
+
+    var id: String { rawValue }
+
+    var windowShare: CGFloat {
+        switch self {
+        case .half: return 1.0 / 2
+        case .threeFifths: return 3.0 / 5
+        case .twoThirds: return 2.0 / 3
+        case .threeQuarters: return 3.0 / 4
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .half: return "½ · ½"
+        case .threeFifths: return "⅗ · ⅖"
+        case .twoThirds: return "⅔ · ⅓"
+        case .threeQuarters: return "¾ · ¼"
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .half: return "Mitad ventana, mitad cámara."
+        case .threeFifths: return "Ventana algo mayor que la cámara."
+        case .twoThirds: return "Dos tercios de ventana, un tercio de cámara."
+        case .threeQuarters: return "Casi todo ventana; la cámara, una franja."
+        }
+    }
+}
+
+/// Cómo se reparte la escena dividida: proporción y quién va arriba.
+struct SplitLayout: Codable, Equatable {
+    var ratio: SplitRatio = .twoThirds
+    var cameraOnTop = false
+
+    /// Tamaño del hueco de la ventana en un lienzo dado (ancho/alto).
+    func windowSlot(in canvas: Canvas) -> CGSize {
+        let w = CGFloat(canvas.width)
+        let h = (CGFloat(canvas.height) * ratio.windowShare).rounded()
+        return CGSize(width: w, height: h)
+    }
+}
+
 /// Dónde va cada fuente dentro del lienzo. Los rectángulos están en coordenadas
-/// de Core Image: el origen es la esquina INFERIOR izquierda, así que la
-/// pantalla (arriba) tiene la `y` mayor.
+/// de Core Image: el origen es la esquina INFERIOR izquierda, así que lo que
+/// va arriba tiene la `y` mayor.
 struct Layout {
     var screen: CGRect?
     var camera: CGRect
 
-    static func of(_ scene: SceneKind, in canvas: Canvas) -> Layout {
+    static func of(_ scene: SceneKind, in canvas: Canvas, split: SplitLayout = SplitLayout()) -> Layout {
         let w = CGFloat(canvas.width)
         let h = CGFloat(canvas.height)
         switch scene {
         case .camera:
             return Layout(screen: nil, camera: CGRect(x: 0, y: 0, width: w, height: h))
         case .split:
-            // 2/3 de pantalla arriba, 1/3 de cámara abajo.
-            let cameraHeight = (h / 3).rounded()
+            let windowHeight = split.windowSlot(in: canvas).height
+            let cameraHeight = h - windowHeight
+            if split.cameraOnTop {
+                return Layout(
+                    screen: CGRect(x: 0, y: 0, width: w, height: windowHeight),
+                    camera: CGRect(x: 0, y: windowHeight, width: w, height: cameraHeight)
+                )
+            }
             return Layout(
-                screen: CGRect(x: 0, y: cameraHeight, width: w, height: h - cameraHeight),
+                screen: CGRect(x: 0, y: cameraHeight, width: w, height: windowHeight),
                 camera: CGRect(x: 0, y: 0, width: w, height: cameraHeight)
             )
         }

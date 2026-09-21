@@ -10,6 +10,7 @@ import SwiftUI
 @MainActor
 final class Engine: ObservableObject {
     @Published var scene: SceneKind = .split { didSet { sync() ; save() } }
+    @Published var split = SplitLayout() { didSet { if oldValue != split { sync(); save() } } }
     @Published private(set) var isRecording = false
     @Published private(set) var recordingSeconds = 0
     @Published private(set) var lastRecording: URL?
@@ -211,11 +212,10 @@ final class Engine: ObservableObject {
         if windowID == id { restartScreen() }
     }
 
-    /// Proporción (ancho/alto) del hueco de la ventana en la escena dividida.
-    var windowSlotAspect: CGFloat {
-        let slot = Layout.of(.split, in: canvas).screen!
-        return slot.width / slot.height
-    }
+    /// Tamaño y proporción (ancho/alto) del hueco de la ventana en la escena
+    /// dividida, con el reparto actual.
+    var windowSlot: CGSize { split.windowSlot(in: canvas) }
+    var windowSlotAspect: CGFloat { windowSlot.width / windowSlot.height }
 
     /// Cómo estaba la ventana antes de ajustarla, para poder deshacerlo.
     @Published private(set) var frameBeforeFit: (windowID: CGWindowID, frame: CGRect)?
@@ -284,10 +284,10 @@ final class Engine: ObservableObject {
         timer.schedule(deadline: .now(), repeating: interval, leeway: .milliseconds(2))
         timer.setEventHandler { [camera, screen, shared, preview, demo] in
             guard let compositor = shared.compositor else { return }
-            let (scene, offset) = shared.snapshot
+            let (scene, split, offset) = shared.snapshot
             let cameraFrame = demo?.camera ?? camera.latestFrame
             let screenFrame = demo?.window ?? screen.latestFrame
-            guard let frame = compositor.compose(scene: scene, camera: cameraFrame, screen: screenFrame, cameraOffset: offset) else { return }
+            guard let frame = compositor.compose(scene: scene, split: split, camera: cameraFrame, screen: screenFrame, cameraOffset: offset) else { return }
             let now = CMClockGetTime(CMClockGetHostTimeClock())
             preview.show(frame, at: now)
             shared.recorder?.appendVideo(frame, at: now)
@@ -298,7 +298,7 @@ final class Engine: ObservableObject {
 
     /// Copia para la cola de render de lo que decide el hilo principal.
     private func sync() {
-        shared.set(scene: scene, cameraOffset: cameraOffset)
+        shared.set(scene: scene, split: split, cameraOffset: cameraOffset)
     }
 
     // MARK: - Grabación
@@ -376,6 +376,13 @@ final class Engine: ObservableObject {
         case "/record/stop": stopRecording()
         case "/record/toggle": toggleRecording()
         case "/window/fit": fitWindowToSlot()
+        case _ where path.hasPrefix("/split/"):
+            // /split/half|threeFifths|twoThirds|threeQuarters  ·  /split/top  ·  /split/bottom
+            let key = String(path.dropFirst("/split/".count))
+            if let ratio = SplitRatio(rawValue: key) { split.ratio = ratio }
+            else if key == "top" { split.cameraOnTop = true }
+            else if key == "bottom" { split.cameraOnTop = false }
+            else { extra["error"] = "not_found" }
         case "/window/unfit": undoFitWindow()
         case "/windows":
             await refreshDevices()
@@ -403,6 +410,8 @@ final class Engine: ObservableObject {
             "status": status,
             "problem": problem ?? "",
             "quality": quality.rawValue,
+            "split": split.ratio.rawValue,
+            "cameraOnTop": split.cameraOnTop,
             "codec": codec.rawValue,
             "folder": outputFolder.path,
         ]
@@ -414,6 +423,7 @@ final class Engine: ObservableObject {
 
     private struct Saved: Codable {
         var scene: SceneKind?
+        var split: SplitLayout?
         var cameraID: String?
         var microphoneID: String?
         var windowApp: String?
@@ -432,6 +442,7 @@ final class Engine: ObservableObject {
         guard let data = UserDefaults.standard.data(forKey: "saved"),
               let saved = try? JSONDecoder().decode(Saved.self, from: data) else { return }
         if let s = saved.scene { scene = s }
+        if let sp = saved.split { split = sp }
         cameraID = saved.cameraID ?? ""
         microphoneID = saved.microphoneID ?? ""
         savedWindowApp = saved.windowApp
@@ -448,6 +459,7 @@ final class Engine: ObservableObject {
         let w = selectedWindow
         let saved = Saved(
             scene: scene,
+            split: split,
             cameraID: cameraID,
             microphoneID: microphoneID,
             windowApp: w?.owningApplication?.bundleIdentifier ?? savedWindowApp,
@@ -477,6 +489,7 @@ final class Engine: ObservableObject {
 private final class SharedState: @unchecked Sendable {
     private let lock = NSLock()
     private var _scene: SceneKind = .split
+    private var _split = SplitLayout()
     private var _cameraOffset: Double = 0
     private var _recorder: Recorder?
     private var _compositor: Compositor?
@@ -486,14 +499,15 @@ private final class SharedState: @unchecked Sendable {
         set { lock.lock(); _compositor = newValue; lock.unlock() }
     }
 
-    var snapshot: (SceneKind, Double) {
+    var snapshot: (SceneKind, SplitLayout, Double) {
         lock.lock(); defer { lock.unlock() }
-        return (_scene, _cameraOffset)
+        return (_scene, _split, _cameraOffset)
     }
 
-    func set(scene: SceneKind, cameraOffset: Double) {
+    func set(scene: SceneKind, split: SplitLayout, cameraOffset: Double) {
         lock.lock()
         _scene = scene
+        _split = split
         _cameraOffset = cameraOffset
         lock.unlock()
     }

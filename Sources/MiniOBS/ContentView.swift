@@ -32,11 +32,22 @@ struct ContentView: View {
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                Text(engine.scene == .split
-                     ? "Arriba 2/3 la ventana elegida, abajo 1/3 la cámara."
-                     : "La cámara a todo el lienzo (recorta los laterales).")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                if engine.scene == .split {
+                    Picker("Reparto", selection: $engine.split.ratio) {
+                        ForEach(SplitRatio.allCases) { r in Text(r.title).tag(r) }
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    Toggle("Cámara arriba, ventana abajo", isOn: $engine.split.cameraOnTop)
+                        .font(.callout)
+                    Text("\(engine.split.ratio.detail) Hueco de la ventana: \(Int(engine.windowSlot.width))×\(Int(engine.windowSlot.height)).")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("La cámara a todo el lienzo (recorta los laterales).")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             section("Ventana (escena dividida)") {
@@ -71,7 +82,7 @@ struct ContentView: View {
                         Button("Deshacer") { engine.undoFitWindow() }
                     }
                 }
-                Text("Le da a la ventana la proporción del hueco (2160×2560) para que entre entera y sin franjas.")
+                Text("Le da a la ventana la proporción del hueco actual (\(Int(engine.windowSlot.width))×\(Int(engine.windowSlot.height))) para que entre entera y sin franjas.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

@@ -36,11 +36,11 @@ final class Compositor {
 
     /// `cameraOffset` va de -1 (borde izquierdo del sensor) a 1 (derecho); 0
     /// centra. Solo actúa sobre lo que el recorte deja fuera.
-    func compose(scene: SceneKind, camera: CVPixelBuffer?, screen: ScreenFrame?, cameraOffset: Double = 0) -> CVPixelBuffer? {
+    func compose(scene: SceneKind, split: SplitLayout = SplitLayout(), camera: CVPixelBuffer?, screen: ScreenFrame?, cameraOffset: Double = 0) -> CVPixelBuffer? {
         var out: CVPixelBuffer?
         guard CVPixelBufferPoolCreatePixelBuffer(nil, pool, &out) == kCVReturnSuccess, let out else { return nil }
 
-        let layout = Layout.of(scene, in: canvas)
+        let layout = Layout.of(scene, in: canvas, split: split)
         var image = background
 
         if let camera {
