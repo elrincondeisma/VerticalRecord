@@ -5,11 +5,11 @@ import CoreMedia
 /// mismo reloj (el del host) y el grabador puede mezclar sus tiempos sin más.
 final class CameraCapture: NSObject {
     private let session = AVCaptureSession()
-    private let videoQueue = DispatchQueue(label: "miniobs.camera.video")
-    private let audioQueue = DispatchQueue(label: "miniobs.camera.audio")
+    private let videoQueue = DispatchQueue(label: "verticalrecord.camera.video")
+    private let audioQueue = DispatchQueue(label: "verticalrecord.camera.audio")
     /// Arrancar y parar la sesión bloquea (la OBSBOT tarda ~1 s en despertar):
     /// nunca desde el hilo principal.
-    private let sessionQueue = DispatchQueue(label: "miniobs.camera.session")
+    private let sessionQueue = DispatchQueue(label: "verticalrecord.camera.session")
     private var observers: [NSObjectProtocol] = []
     private let videoOutput = AVCaptureVideoDataOutput()
     private let audioOutput = AVCaptureAudioDataOutput()

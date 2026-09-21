@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="Resources/AppIcon.png" width="160" alt="MiniOBS">
+  <img src="Resources/AppIcon.png" width="160" alt="VerticalRecord">
 </p>
 
-<h1 align="center">MiniOBS</h1>
+<h1 align="center">VerticalRecord</h1>
 
 <p align="center">
   Grabadora nativa de macOS para <strong>vídeo vertical</strong>: tu cámara, tu micro y una ventana, en 4K.<br>
@@ -10,19 +10,22 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/elrincondeisma/MiniOBS/releases/latest"><img src="https://img.shields.io/github/v/release/elrincondeisma/MiniOBS?label=descargar&color=6f4cff" alt="Descargar"></a>
+  <a href="https://github.com/elrincondeisma/VerticalRecord/releases/latest"><img src="https://img.shields.io/github/v/release/elrincondeisma/VerticalRecord?label=descargar&color=6f4cff" alt="Descargar"></a>
   <img src="https://img.shields.io/badge/macOS-15%2B-000?logo=apple" alt="macOS 15+">
   <img src="https://img.shields.io/badge/Apple%20Silicon-nativo-000?logo=apple" alt="Apple Silicon">
-  <img src="https://img.shields.io/github/license/elrincondeisma/MiniOBS" alt="MIT">
+  <img src="https://img.shields.io/github/license/elrincondeisma/VerticalRecord" alt="MIT">
 </p>
 
 <p align="center">
   <img src="docs/split.png" width="820" alt="Escena dividida: ventana arriba, cámara abajo">
 </p>
 
+> Hasta la versión 1.0 esta app se llamaba *MiniOBS*. «OBS» es una marca del OBS Project, así que
+> cambió de nombre; los enlaces antiguos redirigen aquí y la app hereda tus preferencias y grabaciones.
+
 OBS es enorme y está pensado para streaming horizontal. Para grabar Shorts, Reels y TikToks con
 tu cara y tu pantalla solo hacen falta tres cosas: la cámara, el micro y la ventana en la que trabajas.
-MiniOBS hace eso, en vertical, a 4K, y ya está.
+VerticalRecord hace eso, en vertical, a 4K, y ya está.
 
 ## Funciones
 
@@ -51,8 +54,8 @@ MiniOBS hace eso, en vertical, a 4K, y ya está.
 
 ## Instalación
 
-1. Descarga el **DMG** de la [última versión](https://github.com/elrincondeisma/MiniOBS/releases/latest).
-2. Ábrelo y arrastra **MiniOBS** a **Aplicaciones**.
+1. Descarga el **DMG** de la [última versión](https://github.com/elrincondeisma/VerticalRecord/releases/latest).
+2. Ábrelo y arrastra **VerticalRecord** a **Aplicaciones**.
 3. La primera vez, macOS dirá que no puede verificar la app (no está notarizada con un certificado
    de pago de Apple). Ve a **Ajustes del Sistema → Privacidad y seguridad**, baja hasta el aviso y
    pulsa **«Abrir de todos modos»**. Solo hace falta una vez.
@@ -60,7 +63,7 @@ MiniOBS hace eso, en vertical, a 4K, y ya está.
    Si prefieres la terminal:
 
    ```bash
-   xattr -dr com.apple.quarantine /Applications/MiniOBS.app
+   xattr -dr com.apple.quarantine /Applications/VerticalRecord.app
    ```
 
 4. Al arrancar te pedirá permiso de **cámara**, **micrófono** y **grabación de pantalla**. El de
@@ -75,7 +78,7 @@ Requiere macOS 15 (Sequoia) o posterior y un Mac con Apple Silicon.
    pulsa **Ajustar la ventana al hueco**.
 2. Elige **cámara** y **micrófono**. Si no sales centrado, mueve el **Encuadre**.
 3. `⌘R` para grabar. Cambia de escena con `⌘1` / `⌘2` cuando quieras.
-4. `⌘R` para parar. El vídeo está en `~/Movies/MiniOBS/` (o la carpeta que elijas en Preferencias).
+4. `⌘R` para parar. El vídeo está en `~/Movies/VerticalRecord/` (o la carpeta que elijas en Preferencias).
 
 ### Preferencias (`⌘,`)
 
@@ -90,7 +93,7 @@ La cámara se captura siempre a su máxima resolución; la calidad solo decide e
 
 ## Mando a distancia (Stream Deck, scripts)
 
-MiniOBS escucha en `http://127.0.0.1:8790` (solo en tu máquina). Cada petición devuelve el estado
+VerticalRecord escucha en `http://127.0.0.1:8790` (solo en tu máquina). Cada petición devuelve el estado
 completo en JSON, así que una tecla que sondee `/status` puede encenderse sola.
 
 ```
@@ -116,10 +119,10 @@ del Stream Deck: URL de la acción, sondeo a `/status` cada pocos segundos y com
 Solo hacen falta las Command Line Tools de Xcode (`xcode-select --install`).
 
 ```bash
-git clone https://github.com/elrincondeisma/MiniOBS
-cd MiniOBS
-./build.sh run          # compila, monta MiniOBS.app y lo abre
-./release.sh 0.1.0      # además genera dist/MiniOBS-0.1.0.dmg
+git clone https://github.com/elrincondeisma/VerticalRecord
+cd VerticalRecord
+./build.sh run          # compila, monta VerticalRecord.app y lo abre
+./release.sh 0.1.0      # además genera dist/VerticalRecord-0.1.0.dmg
 ```
 
 `build.sh` firma con el certificado que encuentre (Developer ID → Apple Development → ad hoc).
@@ -128,7 +131,7 @@ Con Developer ID y un perfil de `notarytool` en `NOTARY_PROFILE`, `release.sh` n
 ### Cómo está hecho
 
 ```
-Sources/MiniOBS/
+Sources/VerticalRecord/
   Scenes.swift          lienzo, calidades, códecs y layouts de las dos escenas
   CameraCapture.swift   AVCaptureSession: cámara (mejor formato a 30 fps) + micro, con recuperación de errores
   ScreenCapture.swift   ScreenCaptureKit: una ventana; detecta si cambia de tamaño y rearranca

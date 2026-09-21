@@ -50,7 +50,7 @@ struct PreferencesView: View {
                     .help("Abrir en el Finder")
                 }
                 if engine.outputFolder != Engine.defaultOutputFolder {
-                    Button("Volver a ~/Movies/MiniOBS") { engine.outputFolder = Engine.defaultOutputFolder }
+                    Button("Volver a ~/Movies/VerticalRecord") { engine.outputFolder = Engine.defaultOutputFolder }
                         .font(.caption)
                 }
             }

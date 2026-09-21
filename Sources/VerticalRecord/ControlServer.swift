@@ -15,7 +15,7 @@ final class ControlServer {
     static let defaultPort: UInt16 = 8790
 
     private var listener: NWListener?
-    private let queue = DispatchQueue(label: "miniobs.control")
+    private let queue = DispatchQueue(label: "verticalrecord.control")
     private let handler: Handler
 
     init(handler: @escaping Handler) {

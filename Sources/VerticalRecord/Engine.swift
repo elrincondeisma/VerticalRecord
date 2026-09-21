@@ -33,7 +33,7 @@ final class Engine: ObservableObject {
 
     let preview = PreviewLayerHost()
     static let defaultOutputFolder = FileManager.default.homeDirectoryForCurrentUser
-        .appendingPathComponent("Movies/MiniOBS", isDirectory: true)
+        .appendingPathComponent("Movies/VerticalRecord", isDirectory: true)
 
     var canvas: Canvas { quality.canvas }
 
@@ -41,7 +41,7 @@ final class Engine: ObservableObject {
     private let screen = ScreenCapture()
     private var control: ControlServer?
 
-    private let renderQueue = DispatchQueue(label: "miniobs.render", qos: .userInteractive)
+    private let renderQueue = DispatchQueue(label: "verticalrecord.render", qos: .userInteractive)
     private var timer: DispatchSourceTimer?
     private let shared = SharedState()
     private var secondsTimer: Timer?
@@ -61,7 +61,7 @@ final class Engine: ObservableObject {
     struct Demo {
         let camera: CVPixelBuffer
         let window: ScreenFrame
-        let windowNames = ["Warp — miniobs", "Xcode — MiniOBS.xcodeproj", "Arc — Documentación"]
+        let windowNames = ["Warp — verticalrecord", "Xcode — VerticalRecord.xcodeproj", "Arc — Documentación"]
     }
 
     init() {
@@ -115,7 +115,7 @@ final class Engine: ObservableObject {
         startControlServer()
         startRenderLoop()
 
-        // Al volver a MiniOBS (viniendo de abrir otra app, por ejemplo) la
+        // Al volver a VerticalRecord (viniendo de abrir otra app, por ejemplo) la
         // lista de ventanas se pone al día sola.
         NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor in await self?.refreshWindows() }
@@ -438,7 +438,28 @@ final class Engine: ObservableObject {
     private var savedWindowApp: String?
     private var savedWindowTitle: String?
 
+    /// La app se llamó MiniOBS hasta la 1.0. Al cambiar el identificador del
+    /// bundle, macOS estrena preferencias: la primera vez se heredan las viejas
+    /// y la carpeta de grabaciones se renombra, para que nadie pierda nada.
+    private func migrateFromMiniOBS() {
+        guard UserDefaults.standard.data(forKey: "saved") == nil,
+              let old = UserDefaults(suiteName: "com.elrincondeisma.miniobs"),
+              let data = old.data(forKey: "saved") else { return }
+        let fm = FileManager.default
+        let oldFolder = fm.homeDirectoryForCurrentUser.appendingPathComponent("Movies/MiniOBS", isDirectory: true)
+        if fm.fileExists(atPath: oldFolder.path), !fm.fileExists(atPath: Engine.defaultOutputFolder.path) {
+            try? fm.moveItem(at: oldFolder, to: Engine.defaultOutputFolder)
+        }
+        var migrated = data
+        if var saved = try? JSONDecoder().decode(Saved.self, from: data) {
+            if saved.outputFolder == oldFolder.path { saved.outputFolder = Engine.defaultOutputFolder.path }
+            migrated = (try? JSONEncoder().encode(saved)) ?? data
+        }
+        UserDefaults.standard.set(migrated, forKey: "saved")
+    }
+
     private func load() {
+        migrateFromMiniOBS()
         guard let data = UserDefaults.standard.data(forKey: "saved"),
               let saved = try? JSONDecoder().decode(Saved.self, from: data) else { return }
         if let s = saved.scene { scene = s }

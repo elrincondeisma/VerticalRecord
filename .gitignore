@@ -1,5 +1,5 @@
 .build/
-MiniOBS.app/
+VerticalRecord.app/
 *.xcodeproj
 .DS_Store
 dist/

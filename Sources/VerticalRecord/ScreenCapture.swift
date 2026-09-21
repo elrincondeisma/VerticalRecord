@@ -15,7 +15,7 @@ struct ScreenFrame {
 /// de qué la tape (`desktopIndependentWindow`).
 final class ScreenCapture: NSObject {
     private var stream: SCStream?
-    private let queue = DispatchQueue(label: "miniobs.screen")
+    private let queue = DispatchQueue(label: "verticalrecord.screen")
     private let lock = NSLock()
     private var _latest: ScreenFrame?
 

@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "MiniOBS",
+    name: "VerticalRecord",
     platforms: [.macOS(.v15)],
     targets: [
         .executableTarget(
-            name: "MiniOBS",
-            path: "Sources/MiniOBS",
+            name: "VerticalRecord",
+            path: "Sources/VerticalRecord",
             swiftSettings: [.swiftLanguageMode(.v5)],
             linkerSettings: [
                 .linkedFramework("ScreenCaptureKit"),

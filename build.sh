@@ -1,5 +1,5 @@
 #!/bin/sh
-# Compila con SwiftPM, monta MiniOBS.app y lo firma.
+# Compila con SwiftPM, monta VerticalRecord.app y lo firma.
 #
 #   ./build.sh          compila (release) y monta el bundle
 #   ./build.sh run      además lo abre
@@ -10,16 +10,16 @@
 set -eu
 cd "$(dirname "$0")"
 
-APP=MiniOBS.app
-BIN=.build/release/MiniOBS
-ID=com.elrincondeisma.miniobs
+APP=VerticalRecord.app
+BIN=.build/release/VerticalRecord
+ID=com.elrincondeisma.verticalrecord
 
 swift build -c release 2>&1 | grep -vE "^\[|^Compiling|^Build complete|^Emitting|^Linking|^Write" || true
 [ -x "$BIN" ] || { echo "no se ha compilado $BIN"; exit 1; }
 
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp "$BIN" "$APP/Contents/MacOS/MiniOBS"
+cp "$BIN" "$APP/Contents/MacOS/VerticalRecord"
 [ -f Resources/AppIcon.icns ] && cp Resources/AppIcon.icns "$APP/Contents/Resources/"
 
 cat > "$APP/Contents/Info.plist" <<PLIST
@@ -27,13 +27,13 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleName</key><string>MiniOBS</string>
-    <key>CFBundleDisplayName</key><string>MiniOBS</string>
+    <key>CFBundleName</key><string>VerticalRecord</string>
+    <key>CFBundleDisplayName</key><string>VerticalRecord</string>
     <key>CFBundleIdentifier</key><string>$ID</string>
-    <key>CFBundleExecutable</key><string>MiniOBS</string>
+    <key>CFBundleExecutable</key><string>VerticalRecord</string>
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleVersion</key><string>1</string>
-    <key>CFBundleShortVersionString</key><string>${VERSION:-0.1.0}</string>
+    <key>CFBundleShortVersionString</key><string>${VERSION:-1.1.0}</string>
     <key>CFBundleDevelopmentRegion</key><string>es</string>
     <key>CFBundleLocalizations</key><array><string>es</string><string>en</string></array>
     <key>LSApplicationCategoryType</key><string>public.app-category.video</string>

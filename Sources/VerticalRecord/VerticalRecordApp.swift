@@ -1,12 +1,12 @@
 import SwiftUI
 
 @main
-struct MiniOBSApp: App {
+struct VerticalRecordApp: App {
     @StateObject private var engine = Engine()
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
     var body: some Scene {
-        WindowGroup("MiniOBS") {
+        WindowGroup("VerticalRecord") {
             ContentView()
                 .environmentObject(engine)
         }

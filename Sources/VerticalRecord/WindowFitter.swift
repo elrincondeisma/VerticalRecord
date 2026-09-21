@@ -117,7 +117,7 @@ enum FitError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .notTrusted: return "MiniOBS necesita Accesibilidad para redimensionar ventanas: actívalo en Ajustes > Privacidad y seguridad > Accesibilidad."
+        case .notTrusted: return "VerticalRecord necesita Accesibilidad para redimensionar ventanas: actívalo en Ajustes > Privacidad y seguridad > Accesibilidad."
         case .noApp: return "La ventana no tiene app dueña."
         case .noWindows: return "La app no expone sus ventanas por Accesibilidad."
         case .notFound: return "No encuentro esa ventana por Accesibilidad; vuelve a elegirla (↻)."
